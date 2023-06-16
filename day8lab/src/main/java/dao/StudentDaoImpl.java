@@ -98,6 +98,33 @@ public class StudentDaoImpl implements StudentDao {
 		}
 		return null;
 	}
+
+@Override
+	public List<Student> getStudentBy(LocalDate date) {
+		
+		List<Student> studentList = new ArrayList<>();
+		Session SS = getFactory().getCurrentSession();
+		Transaction TX = SS.beginTransaction();
+		String JPQL = "select s from Student s where s.dob < :DOB";
+		
+		try{
+			
+			studentList = SS.createQuery(JPQL, Student.class).setParameter("DOB", date).getResultList();
+			
+			TX.commit();	
+			System.out.println("  ");
+			System.out.println(" -: This Is The List Of Students As Per Given Date :- ");
+		}
+		catch(RuntimeException e){
+		
+			if(TX != null)
+				TX.rollback();	
+			throw e;				
+		}
+		
+		return studentList;
+	}
+		
 	
 
 }
